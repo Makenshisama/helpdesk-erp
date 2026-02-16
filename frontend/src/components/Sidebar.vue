@@ -22,11 +22,7 @@ function toggleMenu() {
       <router-link to="/tickets" class="nav-item">
         🎫 <span v-if="isOpen">Tickets</span>
       </router-link>
-
-      <router-link to="/tickets/novo" class="nav-item">
-        ➕ <span v-if="isOpen">Novo</span>
-      </router-link>
-
+    
       <router-link to="/clients" class="nav-item">
         👤 <span v-if="isOpen">Clientes</span>
       </router-link>

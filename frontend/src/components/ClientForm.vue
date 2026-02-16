@@ -2,67 +2,92 @@
   <form class="client-form" @submit.prevent="handleSubmit">
     <div class="form-group">
       <label>CPF/CNPJ</label>
-      <input v-model="form.cpf_cnpj" required />
+      <input v-model.trim="form.cpf_cnpj" required />
     </div>
 
     <div class="form-group">
       <label>Razão Social</label>
-      <input v-model="form.razao_social" required />
+      <input v-model.trim="form.razao_social" required />
     </div>
 
     <div class="form-group">
       <label>Nome Fantasia</label>
-      <input v-model="form.nome_fantasia" />
+      <input v-model.trim="form.nome_fantasia" />
     </div>
 
     <div class="form-group">
       <label>Email</label>
-      <input v-model="form.email" type="email" />
+      <input v-model.trim="form.email" type="email" />
     </div>
 
     <div class="form-group">
       <label>Telefone</label>
-      <input v-model="form.telefone" />
+      <input v-model.trim="form.telefone" />
     </div>
 
     <div class="form-actions">
-      <button type="submit">
+      <button type="submit" :disabled="submitting">
         {{ isEdit ? "Atualizar" : "Salvar" }}
       </button>
     </div>
   </form>
 </template>
 
-
 <script>
 export default {
   props: {
-    client: Object
+    client: {
+      type: Object,
+      default: null
+    }
   },
+
   data() {
     return {
-      form: {
-        cpf_cnpj: "",
-        razao_social: "",
-        nome_fantasia: "",
-        email: "",
-        telefone: ""
-      }
+      submitting: false,
+      form: this.getEmptyForm()
     };
   },
+
   computed: {
     isEdit() {
       return !!this.client;
     }
   },
-  mounted() {
-    if (this.client) {
-      this.form = { ...this.client };
+
+  watch: {
+    client: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          this.form = { ...this.getEmptyForm(), ...newVal };
+        }
+      }
     }
   },
+
   methods: {
-    handleSubmit() {
-      this.$emit("submit", this.form);
+    getEmptyForm() {
+      return {
+        cpf_cnpj: "",
+        razao_social: "",
+        nome_fantasia: "",
+        email: "",
+        telefone: ""
+      };
+    },
+
+    async handleSubmit() {
+      if (this.submitting) return;
+
+      this.submitting = true;
+
+      try {
+        // Emite apenas os dados limpos
+        this.$emit("submit", { ...this.form });
+      } finally {
+        this.submitting = false;
+      }
     }
   }
 };
@@ -105,9 +130,15 @@ button {
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-button:hover {
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
   background-color: #1e40af;
 }
 </style>

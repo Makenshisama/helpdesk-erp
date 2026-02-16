@@ -22,7 +22,10 @@ function createClient(client, callback) {
   `;
 
   db.run(sql, [cpf_cnpj, razao_social, nome_fantasia, email, telefone], function (err) {
-    callback(err, this?.lastID);
+     if (err) {
+     return callback(err);
+      }
+      callback(null, this.lastID);
   });
 }
 

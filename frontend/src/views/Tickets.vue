@@ -9,7 +9,7 @@ const ticketEditando = ref(null);
 
 async function carregarTickets() {
   const response = await getTickets();
-  tickets.value = response.data;
+  tickets.value = response;
 }
 
 function editarTicket(ticket) {
@@ -17,6 +17,7 @@ function editarTicket(ticket) {
 }
 
 onMounted(carregarTickets);
+
 </script>
 
 <template>

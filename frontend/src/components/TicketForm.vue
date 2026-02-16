@@ -11,6 +11,8 @@ import { onMounted } from "vue";
 
 const clientes = ref([]);
 const cliente_id = ref("");
+const mensagens = ref([]);
+const novaMensagem = ref("");
 
 onMounted(async () => {
   try {
@@ -35,56 +37,117 @@ const status = ref("Aberto");
 
 
 async function salvar() {
-
   if (!cliente_id.value) {
     alert("Selecione um cliente antes de salvar.");
     return;
   }
 
-  if (props.ticketEditando) {
-    await updateTicket(props.ticketEditando.id, {
-      titulo: titulo.value,
-      descricao: descricao.value,
-      prioridade: prioridade.value,
-      status: status.value,
-      cliente_id: cliente_id.value
-    });
+  try {
+    if (props.ticketEditando) {
+      await updateTicket(props.ticketEditando.id, {
+        titulo: titulo.value,
+        prioridade: prioridade.value,
+        status: status.value,
+        cliente_id: cliente_id.value
+      });
 
-    emit("cancelarEdicao");
-  } else {
-    await createTicket({
-      titulo: titulo.value,
-      descricao: descricao.value,
-      prioridade: prioridade.value,
-      status: status.value,
-      cliente_id: cliente_id.value
-    });
+      emit("cancelarEdicao");
+    } else {
+      // 1️⃣ Criar ticket
+      const response = await createTicket({
+        titulo: titulo.value,
+        prioridade: prioridade.value,
+        status: status.value,
+        cliente_id: cliente_id.value
+      });
+
+      const ticketId = response.data.id;
+
+      // 2️⃣ Criar primeira mensagem
+      if (descricao.value.trim()) {
+        await fetch(`http://localhost:3000/tickets/${ticketId}/messages`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mensagem: descricao.value,
+            autor: "Cliente"
+          })
+        });
+      }
+    }
+
+    emit("ticketCriado");
+
+    titulo.value = "";
+    descricao.value = "";
+    prioridade.value = "";
+    status.value = "Aberto";
+    cliente_id.value = "";
+
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao salvar chamado");
   }
-
-  emit("ticketCriado");
-
-  titulo.value = "";
-  descricao.value = "";
-  prioridade.value = "";
-  status.value = "Aberto";
-  cliente_id.value = "";
 }
+
+async function carregarMensagens() {
+  if (!props.ticketEditando) return;
+
+  const response = await fetch(
+    `http://localhost:3000/tickets/${props.ticketEditando.id}/messages`
+  );
+
+  mensagens.value = await response.json();
+}
+
+async function enviarMensagem() {
+  if (!novaMensagem.value.trim()) return;
+
+  await fetch(
+    `http://localhost:3000/tickets/${props.ticketEditando.id}/messages`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mensagem: novaMensagem.value,
+        autor: "Técnico"
+      })
+    }
+  );
+
+  novaMensagem.value = "";
+  await carregarMensagens();
+}
+
+async function finalizarTicket() {
+  await fetch(
+    `http://localhost:3000/tickets/${props.ticketEditando.id}/finalizar`,
+    { method: "PUT" }
+  );
+
+  alert("Ticket finalizado!");
+  emit("ticketCriado");
+}
+
 
 
 
 watch(
   () => props.ticketEditando,
-  (novoTicket) => {
+  async (novoTicket) => {
     if (novoTicket) {
-  titulo.value = novoTicket.titulo;
-  descricao.value = novoTicket.descricao;
-  prioridade.value = novoTicket.prioridade;
-  status.value = novoTicket.status;
-  cliente_id.value = novoTicket.cliente_id;
-   }
+      titulo.value = novoTicket.titulo;
+      descricao.value = novoTicket.descricao;
+      prioridade.value = novoTicket.prioridade;
+      status.value = novoTicket.status;
+      cliente_id.value = novoTicket.cliente_id;
+
+      await carregarMensagens();
+    }
   },
   { immediate: true }
 );
+
 
 </script>
 
@@ -92,6 +155,20 @@ watch(
   <div class="form">
     <h2>{{ ticketEditando ? "Editar Chamado" : "Novo Chamado" }}</h2>
    <div class="form-group">
+    <div v-if="ticketEditando">
+      <h3>Histórico</h3>
+       <div class="timeline">
+        <div v-for="msg in mensagens" :key="msg.id" class="mensagem">
+          <strong>{{ msg.autor }}</strong>
+          <small>{{ msg.data }}</small>
+          <p>{{ msg.mensagem }}</p>
+        </div>
+       </div>
+      <textarea v-model="novaMensagem" placeholder="Digite uma nova mensagem..."></textarea>
+      <button @click="enviarMensagem">Enviar Mensagem</button>
+      <button @click="finalizarTicket">Finalizar Ticket</button>
+    </div>
+
     <label>Cliente</label>
 
       <select
@@ -191,5 +268,22 @@ button {
 button:hover {
   opacity: 0.9;
 }
+
+.timeline {
+  border: 1px solid #ddd;
+  padding: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #5a6977;
+}
+
+.mensagem {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: rgb(59, 49, 49);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
 
 </style>
