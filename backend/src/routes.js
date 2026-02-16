@@ -1,5 +1,7 @@
 const express = require("express");
 const db = require("./database");
+const clientModel = require("./models/clientModel");
+
 
 const router = express.Router();
 
@@ -77,6 +79,57 @@ router.delete("/tickets/:id", (req, res) => {
     }
   );
 });
+
+// Criar cliente
+router.post("/clients", (req, res) => {
+  clientModel.createClient(req.body, (err, id) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Cliente criado", id });
+  });
+});
+
+// Listar clientes
+router.get("/clients", (req, res) => {
+  clientModel.getClients((err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+});
+
+// Buscar por ID
+router.get("/clients/:id", (req, res) => {
+  clientModel.getClientById(req.params.id, (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(row);
+  });
+});
+
+// Atualizar cliente
+router.put("/clients/:id", (req, res) => {
+  clientModel.updateClient(req.params.id, req.body, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Cliente atualizado" });
+  });
+});
+
+// Deletar cliente
+router.delete("/clients/:id", (req, res) => {
+  clientModel.deleteClient(req.params.id, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Cliente deletado" });
+  });
+});
+
 
 
 

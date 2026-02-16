@@ -5,8 +5,16 @@
  */
 
 import { deleteTicket } from "../services/ticketService";
+import clientService from "../services/clientService";
+import { onMounted, ref } from "vue";
 
+const clientes = ref([]);
 const emit = defineEmits(["atualizar", "editar"]);
+
+onMounted(async () => {
+  const response = await clientService.getClients();
+  clientes.value = response.data;
+});
 
 defineProps({
   tickets: Array,
@@ -39,6 +47,12 @@ function classePrioridade(prioridade) {
   return "";
 }
 
+function nomeCliente(id) {
+  const cliente = clientes.value.find(c => c.id === id);
+  return cliente ? cliente.razao_social : "Não encontrado";
+}
+
+
 
 </script>
 
@@ -48,33 +62,39 @@ function classePrioridade(prioridade) {
 
     <div v-for="ticket in tickets" :key="ticket.id" class="card">
       <h3>{{ ticket.titulo }}</h3>
-      <p>{{ ticket.descricao }}</p>
-      <div class="status-container">
-    <span 
-      class="status-badge"
-      :class="classeStatus(ticket.status)"
-    >
-      <span class="bolinha"></span>
-      {{ ticket.status }}
-    </span>
-  </div>
-      <br />
-      <div class="prioridade-container">
-  <span 
-    class="prioridade-badge"
-    :class="classePrioridade(ticket.prioridade)"
-  >
-    <span class="bolinha"></span>
-    {{ ticket.prioridade }}
-  </span>
-</div>
 
-      <br />
-      <button @click="remover(ticket.id)">Excluir</button>
-      <button @click="emit('editar', ticket)">Editar</button>
+      <p><strong>Cliente:</strong> {{ nomeCliente(ticket.cliente_id) }}</p>
+
+      <p>{{ ticket.descricao }}</p>
+
+      <div class="status-container">
+        <span 
+          class="status-badge"
+          :class="classeStatus(ticket.status)"
+        >
+          <span class="bolinha"></span>
+          {{ ticket.status }}
+        </span>
+      </div>
+
+      <div class="prioridade-container">
+        <span 
+          class="prioridade-badge"
+          :class="classePrioridade(ticket.prioridade)"
+        >
+          <span class="bolinha"></span>
+          {{ ticket.prioridade }}
+        </span>
+      </div>
+
+      <div class="acoes">
+        <button @click="remover(ticket.id)">Excluir</button>
+        <button @click="emit('editar', ticket)">Editar</button>
+      </div>
     </div>
   </div>
 </template>
+
 
 
 <style scoped>
