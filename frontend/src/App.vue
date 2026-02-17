@@ -14,20 +14,25 @@ import Sidebar from "./components/Sidebar.vue";
 
 <style>
 body {
-  margin: 0;
-  background-color: #383a41; /* 👈 cinza bem clarinho moderno */
+  background-color: #383a41;
   font-family: Arial, sans-serif;
 }
 
 .layout {
-  display: flex;
-  min-height: 100vh; /* 👈 ocupa a tela toda */
+  min-height: 100vh;
 }
 
 .content {
-  background-color: #5e5e5e;
-  margin-left: 240px;
+  margin-left: 240px; 
   padding: 30px;
-  flex: 1;
+  min-height: 100vh;
 }
+
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
 </style>

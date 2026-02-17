@@ -17,10 +17,19 @@ router.post("/tickets", (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      res.status(201).json({ id: this.lastID });
+
+      res.status(201).json({
+        id: this.lastID,
+        titulo,
+        descricao,
+        prioridade,
+        status: status || "Aberto",
+        cliente_id
+      });
     }
   );
 });
+
 
 // Listar chamados
 router.get("/tickets", (req, res) => {
@@ -81,14 +90,7 @@ router.delete("/tickets/:id", (req, res) => {
 });
 
 // Criar cliente
-/*router.post("/clients", (req, res) => {
-  clientModel.createClient(req.body, (err, id) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ message: "Cliente criado", id });
-  });
-});*/
+
 router.post("/clients", (req, res) => {
   console.log("BODY:", req.body);
 

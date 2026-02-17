@@ -61,7 +61,7 @@ async function salvar() {
         cliente_id: cliente_id.value
       });
 
-      const ticketId = response.data.id;
+      const ticketId = response.id;
 
       // 2️⃣ Criar primeira mensagem
       if (descricao.value.trim()) {
@@ -208,17 +208,10 @@ watch(
         <option value="Alta">Alta</option>
       </select>
     </div>
-
-    <button @click="salvar">
-      {{ ticketEditando ? "Atualizar" : "Criar Chamado" }}
-    </button>
-
-    <button
-      v-if="ticketEditando"
-      @click="$emit('cancelarEdicao')"
-    >
-      Cancelar
-    </button>
+    <div class="button-group">
+      <button @click="salvar">{{ ticketEditando ? "Atualizar" : "Criar Chamado" }}</button>
+      <button @click="$emit('cancelarEdicao')">Cancelar</button>
+    </div>
   </div>
 </template>
 
@@ -228,7 +221,7 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 500px;
+  max-width: 1500px;
 }
 
 .form-group {
@@ -253,6 +246,7 @@ select {
 
 textarea {
   min-height: 100px;
+  min-width: 800px;
   resize: vertical;
 }
 
@@ -284,6 +278,15 @@ button:hover {
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+
 
 
 </style>

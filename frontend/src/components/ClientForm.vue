@@ -95,7 +95,7 @@ export default {
 
 <style scoped>
 .client-form {
-  max-width: 600px;
+  width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

@@ -81,7 +81,7 @@ export default {
 }
 
 table {
-  width: 100%;
+  width: 800px;
   border-collapse: separate;
   border-spacing: 0 8px;   
   background-color: white;

@@ -29,16 +29,29 @@ async function remover(id) {
 }
 
 function classeStatus(status) {
-  if (status === "Aberto") return "aberto";
-  if (status === "Em andamento") return "andamento";
-  if (status === "Finalizado") return "finalizado";
+  if (!status) return "";
+
+  const s = status
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  if (s.includes("aberto")) return "aberto";
+  if (s.includes("andamento")) return "andamento";
+  if (s.includes("concluido")) return "finalizado"; 
+
   return "";
 }
+
+
 
 function classePrioridade(prioridade) {
   if (!prioridade) return "";
 
-  const p = prioridade.toLowerCase();
+  const p = prioridade
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
   if (p.includes("baixa")) return "baixa";
   if (p.includes("media")) return "media";
@@ -46,6 +59,7 @@ function classePrioridade(prioridade) {
 
   return "";
 }
+
 
 function nomeCliente(id) {
   const cliente = clientes.value.find(c => c.id === id);
@@ -57,41 +71,42 @@ function nomeCliente(id) {
 </script>
 
 <template>
-  <div>
+  <div >
     <h2>Lista de Chamados</h2>
+     <div class="ticket-list">
+     <div v-for="ticket in tickets" :key="ticket.id" class="card">
+       <h3>{{ ticket.titulo }}</h3>
 
-    <div v-for="ticket in tickets" :key="ticket.id" class="card">
-      <h3>{{ ticket.titulo }}</h3>
+       <p><strong>Cliente:</strong> {{ nomeCliente(ticket.cliente_id) }}</p>
 
-      <p><strong>Cliente:</strong> {{ nomeCliente(ticket.cliente_id) }}</p>
+       <p>{{ ticket.descricao }}</p>
 
-      <p>{{ ticket.descricao }}</p>
+       <div class="status-container">
+         <span 
+           class="status-badge"
+           :class="classeStatus(ticket.status)"
+         >
+           <span class="bolinha"></span>
+           {{ ticket.status }}
+         </span>
+       </div>
 
-      <div class="status-container">
-        <span 
-          class="status-badge"
-          :class="classeStatus(ticket.status)"
-        >
-          <span class="bolinha"></span>
-          {{ ticket.status }}
-        </span>
-      </div>
+       <div class="prioridade-container">
+         <span 
+           class="prioridade-badge"
+           :class="classePrioridade(ticket.prioridade)"
+         >
+           <span class="bolinha"></span>
+           {{ ticket.prioridade }}
+         </span>
+       </div>
 
-      <div class="prioridade-container">
-        <span 
-          class="prioridade-badge"
-          :class="classePrioridade(ticket.prioridade)"
-        >
-          <span class="bolinha"></span>
-          {{ ticket.prioridade }}
-        </span>
-      </div>
-
-      <div class="acoes">
+       <div class="acoes">
         <button @click="remover(ticket.id)">Excluir</button>
         <button @click="emit('editar', ticket)">Editar</button>
-      </div>
-    </div>
+       </div>
+     </div>
+     </div>
   </div>
 </template>
 
@@ -99,10 +114,21 @@ function nomeCliente(id) {
 
 <style scoped>
 .card {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
+  background: #2f3136;
+  color: #f1f1f1;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -189,6 +215,12 @@ function nomeCliente(id) {
 
 .alta .bolinha {
   background-color: #dc3545;
+}
+
+.ticket-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
 }
 
 
