@@ -75,7 +75,7 @@ function nomeCliente(id) {
     <h2>Lista de Chamados</h2>
      <div class="ticket-list">
      <div v-for="ticket in tickets" :key="ticket.id" class="card">
-       <h3>{{ ticket.titulo }}</h3>
+       <div class="card-title"><h3>{{ ticket.titulo }}</h3></div>
 
        <p><strong>Cliente:</strong> {{ nomeCliente(ticket.cliente_id) }}</p>
 
@@ -102,8 +102,8 @@ function nomeCliente(id) {
        </div>
 
        <div class="acoes">
-        <button @click="remover(ticket.id)">Excluir</button>
-        <button @click="emit('editar', ticket)">Editar</button>
+        <button class="delete" @click="remover(ticket.id)">Excluir</button>
+        <button class="edit" @click="emit('editar', ticket)">Editar</button>
        </div>
      </div>
      </div>
@@ -114,8 +114,8 @@ function nomeCliente(id) {
 
 <style scoped>
 .card {
-  background: #2f3136;
-  color: #f1f1f1;
+  background: #fafafa;
+  color: #000000;
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -127,6 +127,20 @@ function nomeCliente(id) {
 
 .card:hover {
   transform: translateY(-4px);
+}
+
+.card-title {
+  background: linear-gradient(135deg, #ffa641, #333333);
+  color: white;
+  padding: 12px;
+  border-radius: 10px 10px 0 0;
+  margin: -16px -16px 12px -16px;
+}
+
+.card-title h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .status-badge {
@@ -223,5 +237,40 @@ function nomeCliente(id) {
   gap: 16px;
 }
 
+.acoes {
+  display: flex;
+  justify-content: center; /* centraliza */
+  gap: 10px;
+}
+
+/* botão excluir */
+.delete {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.delete:hover {
+  background-color: #c0392b;
+}
+
+/* botão editar */
+.edit {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.edit:hover {
+  background-color: #2980b9;
+}
 
 </style>

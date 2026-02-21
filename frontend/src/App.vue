@@ -14,8 +14,10 @@ import Sidebar from "./components/Sidebar.vue";
 
 <style>
 body {
-  background-color: #383a41;
+  background-color: #535353;
   font-family: Arial, sans-serif;
+  color: #ffffff; /* cor padrão dos textos */
+  font-weight: 600;
 }
 
 .layout {

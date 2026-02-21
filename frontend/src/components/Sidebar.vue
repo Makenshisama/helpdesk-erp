@@ -37,8 +37,8 @@ function toggleMenu() {
   top: 0;
   height: 100vh;
   width: 240px;
-  background: #111827;
-  color: white;
+  background: #e29300;
+  color: rgb(255, 255, 255);
   padding: 20px 10px;
   transition: width 0.3s ease;
   overflow: hidden;
@@ -72,13 +72,14 @@ nav {
   padding: 10px;
   border-radius: 8px;
   text-decoration: none;
-  color: #d1d5db;
+  color: #ffffff;
+  font-weight: 600; 
   transition: 0.2s;
 }
 
 .nav-item:hover {
-  background: rgba(255,255,255,0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgb(255, 0, 0);
 }
 
 .router-link-exact-active {

@@ -210,7 +210,7 @@ watch(
     </div>
     <div class="button-group">
       <button @click="salvar">{{ ticketEditando ? "Atualizar" : "Criar Chamado" }}</button>
-      <button @click="$emit('cancelarEdicao')">Cancelar</button>
+      <button class="cancel" @click="$emit('cancelarEdicao')">Cancelar</button>
     </div>
   </div>
 </template>
@@ -232,16 +232,20 @@ watch(
 label {
   font-weight: 600;
   margin-bottom: 6px;
-  color: #000;
+  color: #ffffff;
 }
 
 input,
 textarea,
 select {
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ffca38;
   border-radius: 6px;
   font-size: 14px;
+  background-color: #ffffff;
+  color:#000000;
+  font-weight: 600;
+  text-align: center;
 }
 
 textarea {
@@ -254,9 +258,14 @@ button {
   padding: 10px;
   border: none;
   border-radius: 6px;
-  background-color: #2563eb;
-  color: white;
+  background-color: #2bee35;
+  color: rgb(0, 0, 0);
   cursor: pointer;
+}
+
+.button-group .cancel {
+  background-color: #e6311d;
+  color: white;
 }
 
 button:hover {
