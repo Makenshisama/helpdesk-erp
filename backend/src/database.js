@@ -19,16 +19,17 @@ db.serialize(() => {
 
   // Tabela de clientes
   db.run(`
-    CREATE TABLE IF NOT EXISTS clients (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cpf_cnpj TEXT NOT NULL,
-      razao_social TEXT NOT NULL,
-      nome_fantasia TEXT,
-      email TEXT,
-      telefone TEXT,
-      data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  CREATE TABLE IF NOT EXISTS clients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cpf_cnpj TEXT NOT NULL,
+    razao_social TEXT NOT NULL,
+    nome_fantasia TEXT,
+    email TEXT,
+    telefone TEXT,
+    ativo INTEGER DEFAULT 1,
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
   // Registro de mensagens de tickets
   db.run(`

@@ -29,9 +29,13 @@ function createClient(client, callback) {
   });
 }
 
-// Buscar todos
+// Buscar todos (somente ativos)
 function getClients(callback) {
-  db.all("SELECT * FROM clients", [], callback);
+  db.all(
+    "SELECT * FROM clients WHERE ativo = 1",
+    [],
+    callback
+  );
 }
 
 // Buscar por ID
@@ -54,7 +58,28 @@ function updateClient(id, client, callback) {
 
 // Deletar
 function deleteClient(id, callback) {
-  db.run("DELETE FROM clients WHERE id = ?", [id], callback);
+  db.run(
+    "UPDATE clients SET ativo = 0 WHERE id = ?",
+    [id],
+    callback
+  );
+}
+
+// Restaurar cliente deletado
+function restoreClient(id, callback) {
+  db.run(
+    "UPDATE clients SET ativo = 1 WHERE id = ?",
+    [id],
+    callback
+  );
+}
+
+function getDeletedClients(callback) {
+  db.all(
+    "SELECT * FROM clients WHERE ativo = 0",
+    [],
+    callback
+  );
 }
 
 module.exports = {
@@ -63,4 +88,6 @@ module.exports = {
   getClientById,
   updateClient,
   deleteClient,
+  restoreClient,
+  getDeletedClients,
 };

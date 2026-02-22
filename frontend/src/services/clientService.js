@@ -8,7 +8,8 @@ export default {
   },
 
   getClient(id) {
-    return axios.get(`${API_URL}/${id}`);
+  return axios.get(`${API_URL}/${id}`)
+    .then(res => res.data);
   },
 
   createClient(client) {
@@ -21,5 +22,12 @@ export default {
 
   deleteClient(id) {
     return axios.delete(`${API_URL}/${id}`);
-  }
+  },
+
+  restoreClient(id) {
+  return axios.put(`${API_URL}/${id}/restore`);
+ },
+  getDeletedClients() {
+  return axios.get(`${API_URL}/deleted`);
+ }
 };

@@ -1,5 +1,9 @@
 <template>
   <form class="client-form" @submit.prevent="handleSubmit">
+    <div v-if="isEdit" class="form-group">
+      <label>Código do Cliente</label>
+      <input :value="form.id" disabled />
+    </div>    
     <div class="form-group">
       <label>CPF/CNPJ</label>
       <input v-model.trim="form.cpf_cnpj" required />
@@ -69,6 +73,7 @@ export default {
   methods: {
     getEmptyForm() {
       return {
+        id: null,
         cpf_cnpj: "",
         razao_social: "",
         nome_fantasia: "",
@@ -100,6 +105,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  color: #ffffff;
 }
 
 .form-group {
@@ -114,8 +120,10 @@ export default {
 
 .form-group input {
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #000000;
   border-radius: 6px;
+  background-color: rgb(255, 255, 255);
+  color: #000000;
 }
 
 .form-actions {

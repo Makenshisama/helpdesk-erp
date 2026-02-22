@@ -37,7 +37,7 @@ function toggleMenu() {
   top: 0;
   height: 100vh;
   width: 240px;
-  background: #e29300;
+  background: linear-gradient(to bottom, #fd951e, #333333);
   color: rgb(255, 255, 255);
   padding: 20px 10px;
   transition: width 0.3s ease;

@@ -152,150 +152,196 @@ watch(
 </script>
 
 <template>
-  <div class="form">
-    <h2>{{ ticketEditando ? "Editar Chamado" : "Novo Chamado" }}</h2>
-   <div class="form-group">
-    <div v-if="ticketEditando">
+  <div class="ticket-container">
+
+    <!-- LEFT: FORM -->
+    <div class="ticket-form">
+
+      <h2>
+        {{ ticketEditando ? "Editar Chamado" : "Novo Chamado" }}
+      </h2>
+
+      <div class="form-group">
+        <label>Cliente</label>
+
+        <select v-model="cliente_id"
+                :disabled="ticketEditando"
+                required>
+          <option disabled value="">Selecione um cliente</option>
+
+          <option
+            v-for="cliente in clientes"
+            :key="cliente.id"
+            :value="cliente.id">
+            {{ cliente.razao_social }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Título</label>
+        <input v-model="titulo" />
+      </div>
+
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea v-model="descricao"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Prioridade</label>
+        <select v-model="prioridade">
+          <option disabled value="">Selecione</option>
+          <option>Baixa</option>
+          <option>Média</option>
+          <option>Alta</option>
+        </select>
+      </div>
+
+      <div class="button-group">
+        <button class="primary" @click="salvar">
+          {{ ticketEditando ? "Atualizar" : "Criar Chamado" }}
+        </button>
+
+        <button class="cancel" @click="$emit('cancelarEdicao')">
+          Cancelar
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: TIMELINE -->
+    <div v-if="ticketEditando" class="ticket-chat">
+
       <h3>Histórico</h3>
-       <div class="timeline">
-        <div v-for="msg in mensagens" :key="msg.id" class="mensagem">
-          <strong>{{ msg.autor }}</strong>
-          <small>{{ msg.data }}</small>
+
+      <div class="timeline">
+        <div
+          v-for="msg in mensagens"
+          :key="msg.id"
+          class="mensagem">
+
+          <div class="msg-header">
+            <strong>{{ msg.autor }}</strong>
+            <span>{{ msg.data }}</span>
+          </div>
+
           <p>{{ msg.mensagem }}</p>
         </div>
-       </div>
-      <textarea v-model="novaMensagem" placeholder="Digite uma nova mensagem..."></textarea>
-      <button @click="enviarMensagem">Enviar Mensagem</button>
-      <button @click="finalizarTicket">Finalizar Ticket</button>
-    </div>
+      </div>
 
-    <label>Cliente</label>
-
-      <select
-        v-model="cliente_id" :disabled="ticketEditando" required>
-        <option disabled value="">Selecione um cliente</option>
-        <option v-for="cliente in clientes" :key="cliente.id" :value="cliente.id">
-        {{ cliente.razao_social }}
-        </option>
-      </select>
-  </div>
-
-
-    <div class="form-group">
-      <label for="titulo">Título</label>
-      <input
-        id="titulo"
-        v-model="titulo"
-        placeholder="Digite o título do chamado"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="descricao">Descrição</label>
       <textarea
-        id="descricao"
-        v-model="descricao"
-        placeholder="Descreva o problema ou solicitação"
-      ></textarea>
+        v-model="novaMensagem"
+        placeholder="Digite uma mensagem..."
+      />
+
+      <div class="chat-actions">
+        <button @click="enviarMensagem">Enviar</button>
+        <button class="finish" @click="finalizarTicket">
+          Finalizar
+        </button>
+      </div>
+
     </div>
 
-    <div class="form-group">
-      <label for="prioridade">Prioridade</label>
-      <select id="prioridade" v-model="prioridade" required>
-        <option disabled value="">Selecione a prioridade</option>
-        <option value="Baixa">Baixa</option>
-        <option value="Média">Média</option>
-        <option value="Alta">Alta</option>
-      </select>
-    </div>
-    <div class="button-group">
-      <button @click="salvar">{{ ticketEditando ? "Atualizar" : "Criar Chamado" }}</button>
-      <button class="cancel" @click="$emit('cancelarEdicao')">Cancelar</button>
-    </div>
   </div>
 </template>
 
 
 <style scoped>
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 1500px;
+.ticket-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
+
+/* CARD */
+
+.ticket-form,
+.ticket-chat {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* FORM */
 
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 14px;
 }
 
 label {
   font-weight: 600;
-  margin-bottom: 6px;
-  color: #ffffff;
+  margin-bottom: 4px;
+  color: #374151;
 }
 
 input,
 textarea,
 select {
   padding: 10px;
-  border: 1px solid #ffca38;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #ffffff;
-  color:#000000;
-  font-weight: 600;
-  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
 textarea {
   min-height: 100px;
-  min-width: 800px;
-  resize: vertical;
 }
 
-button {
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background-color: #2bee35;
-  color: rgb(0, 0, 0);
-  cursor: pointer;
-}
-
-.button-group .cancel {
-  background-color: #e6311d;
-  color: white;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.timeline {
-  border: 1px solid #ddd;
-  padding: 10px;
-  max-height: 250px;
-  overflow-y: auto;
-  background: #5a6977;
-}
-
-.mensagem {
-  margin-bottom: 12px;
-  padding: 8px;
-  background: rgb(59, 49, 49);
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
+/* BUTTONS */
 
 .button-group {
   display: flex;
   gap: 10px;
-  justify-content: center;
-  margin-top: 10px;
 }
 
+.primary {
+  background: #2563eb;
+  color: white;
+}
 
+.primary:hover {
+  background: #1e40af;
+}
 
+.cancel {
+  background: #ef4444;
+  color: white;
+}
+
+/* CHAT */
+
+.timeline {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.mensagem {
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.msg-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.chat-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.finish {
+  background: #16a34a;
+  color: white;
+}
 
 </style>

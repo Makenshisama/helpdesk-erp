@@ -130,7 +130,7 @@ function nomeCliente(id) {
 }
 
 .card-title {
-  background: linear-gradient(135deg, #ffa641, #333333);
+  background: linear-gradient(135deg, #ff9a27, #333333);
   color: white;
   padding: 12px;
   border-radius: 10px 10px 0 0;

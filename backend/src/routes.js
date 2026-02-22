@@ -116,6 +116,40 @@ router.get("/clients", (req, res) => {
   });
 });
 
+// =====================
+// ROTAS ESPECÍFICAS PRIMEIRO
+// =====================
+
+// clientes deletados
+router.get("/clients/deleted", (req, res) => {
+  clientModel.getDeletedClients((err, rows) => {
+
+    console.log("DELETED CLIENTS:", rows);
+
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json(rows);
+  });
+});
+
+// restaurar cliente
+router.put("/clients/:id/restore", (req, res) => {
+  clientModel.restoreClient(req.params.id, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json({ message: "Cliente restaurado" });
+  });
+});
+
+
+// =====================
+// ROTAS COM :id DEPOIS
+// =====================
+
 // Buscar por ID
 router.get("/clients/:id", (req, res) => {
   clientModel.getClientById(req.params.id, (err, row) => {
@@ -126,7 +160,7 @@ router.get("/clients/:id", (req, res) => {
   });
 });
 
-// Atualizar cliente
+// Atualizar
 router.put("/clients/:id", (req, res) => {
   clientModel.updateClient(req.params.id, req.body, (err) => {
     if (err) {
@@ -136,7 +170,7 @@ router.put("/clients/:id", (req, res) => {
   });
 });
 
-// Deletar cliente
+// Deletar
 router.delete("/clients/:id", (req, res) => {
   clientModel.deleteClient(req.params.id, (err) => {
     if (err) {
@@ -145,7 +179,6 @@ router.delete("/clients/:id", (req, res) => {
     res.json({ message: "Cliente deletado" });
   });
 });
-
 // Adicionar mensagem ao ticket
 router.post("/tickets/:id/messages", (req, res) => {
   const { id } = req.params;
@@ -193,10 +226,6 @@ router.put("/tickets/:id/finalizar", (req, res) => {
     }
   );
 });
-
-
-
-
 
 
 

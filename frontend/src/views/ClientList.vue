@@ -1,39 +1,69 @@
 <template>
   <div class="client-list">
-  <h2>Lista de Clientes</h2>
 
-  <button class="new-button" @click="$router.push('/clients/new')">
-    Novo Cliente
-  </button>
+    <!-- HEADER -->
+    <div class="page-header">
+      <h2>Clientes</h2>
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Razão Social</th>
-          <th>CPF/CNPJ</th>
-          <th>Email</th>
-          <th>Telefone</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="client in clients" :key="client.id">
-          <td>{{ client.razao_social }}</td>
-          <td>{{ client.cpf_cnpj }}</td>
-          <td>{{ client.email }}</td>
-          <td>{{ client.telefone }}</td>
-          <td>
-            <button @click="deleteClient(client.id)">
-              Excluir
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="header-actions">
+        <button class="trash-button"
+          @click="$router.push('/clients/deleted')">
+          🗑 Excluídos
+        </button>
+
+        <button class="new-button"
+          @click="$router.push('/clients/new')">
+          + Novo Cliente
+        </button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Contato</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="client in clients" :key="client.id">
+            <td class="code">{{ client.id }}</td>
+
+            <td>
+              <strong>{{ client.razao_social }}</strong>
+              <div class="sub">
+                {{ client.cpf_cnpj }}
+              </div>
+            </td>
+
+            <td>
+              <div>{{ client.email }}</div>
+              <div class="sub">{{ client.telefone }}</div>
+            </td>
+
+            <td class="actions">
+              <button class="edit-btn"
+                @click="$router.push(`/clients/${client.id}/edit`)">
+                Editar
+              </button>
+
+              <button class="delete-btn"
+                @click="deleteClient(client.id)">
+                Excluir
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
-</div>
-
 </template>
 
 <script>
@@ -58,61 +88,150 @@ export default {
       }
     },
     async deleteClient(id) {
-      if (confirm("Deseja realmente excluir?")) {
+      const confirmed = confirm(
+        "Tem certeza que deseja excluir este cliente?"
+      );
+
+      if (!confirmed) return;
+
+      try {
         await clientService.deleteClient(id);
         this.loadClients();
+        alert("Cliente excluído com sucesso!");
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao excluir cliente");
       }
+    },
+    async restoreClient(id) {
+     if (confirm("Restaurar cliente?")) {
+      await clientService.restoreClient(id);
+      this.loadClients();
     }
+   }
   }
 };
 </script>
 
 <style scoped>
 .client-list {
-  padding: 20px;
+  padding: 28px;
+}
+
+/* HEADER */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.page-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* BUTTONS */
+
+button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
 }
 
 .new-button {
-  margin-bottom: 16px;
+  background: #2563eb;
+  color: white;
 }
 
-.table-wrapper {
-  overflow-x: auto;
+.new-button:hover {
+  background: #1e40af;
 }
+
+.trash-button {
+  background: #222f47;
+}
+
+.trash-button:hover {
+  background: #e5e7eb;
+}
+
+.edit-btn {
+  background: #a3c1fd;
+}
+
+.edit-btn:hover {
+  background: #44f52d;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #991b1b;
+}
+
+/* CARD TABLE */
+
+.table-card {
+  background: rgb(255, 255, 255);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  color: #000000;
+}
+
+/* TABLE */
 
 table {
-  width: 800px;
-  border-collapse: separate;
-  border-spacing: 0 8px;   
-  background-color: white;
-  color: #000;
-}
-
-th, td {
-  padding: 12px 16px; 
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th {
-  background-color: #f3f4f6;
-  font-weight: 600;
+  text-align: left;
+  font-size: 13px;
+  color: #000000;
+  padding: 12px;
+}
+
+td {
+  padding: 14px 12px;
+  border-top: 1px solid #fafafa;
 }
 
 tr:hover {
-  background-color: #f9fafb;
+  background: #f9fafb;
 }
 
-button {
-  padding: 6px 12px;
-  border: none;
-  background-color: #dc2626;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
+/* TEXT DETAILS */
+
+.sub {
+  font-size: 12px;
+  color: #6b7280;
 }
 
-button:hover {
-  background-color: #991b1b;
+.code {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* ACTIONS */
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 </style>
