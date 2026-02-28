@@ -36,14 +36,17 @@
 
             <td>
               <strong>{{ client.razao_social }}</strong>
-              <div class="sub">
-                {{ client.cpf_cnpj }}
+              <div class="sub document">
+                {{ client.cpf_cnpj.length === 14 ? 'CNPJ:' : 'CPF:' }}
+                {{ formatCpfCnpj(client.cpf_cnpj) }}
               </div>
             </td>
 
             <td>
               <div>{{ client.email }}</div>
-              <div class="sub">{{ client.telefone }}</div>
+              <div class="sub phone">
+                📞 {{ formatPhone(client.telefone) }}
+              </div>
             </td>
 
             <td class="actions">
@@ -75,10 +78,14 @@ export default {
       clients: []
     };
   },
+
   mounted() {
     this.loadClients();
   },
+
   methods: {
+
+    // ===== MÉTODOS QUE JÁ EXISTEM =====
     async loadClients() {
       try {
         const response = await clientService.getClients();
@@ -87,6 +94,7 @@ export default {
         console.error(error);
       }
     },
+
     async deleteClient(id) {
       const confirmed = confirm(
         "Tem certeza que deseja excluir este cliente?"
@@ -103,12 +111,60 @@ export default {
         alert("Erro ao excluir cliente");
       }
     },
+
     async restoreClient(id) {
-     if (confirm("Restaurar cliente?")) {
-      await clientService.restoreClient(id);
-      this.loadClients();
+      if (confirm("Restaurar cliente?")) {
+        await clientService.restoreClient(id);
+        this.loadClients();
+      }
+    },
+
+    // ===== NOVOS FORMATADORES (ADICIONAR AQUI) =====
+
+    formatCpfCnpj(value) {
+      if (!value) return "";
+
+      const numbers = value.replace(/\D/g, "");
+
+      if (numbers.length === 14) {
+        return numbers.replace(
+          /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+          "$1.$2.$3/$4-$5"
+        );
+      }
+
+      if (numbers.length === 11) {
+        return numbers.replace(
+          /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
+          "$1.$2.$3-$4"
+        );
+      }
+
+      return value;
+    },
+
+    formatPhone(value) {
+      if (!value) return "";
+
+      const numbers = value.replace(/\D/g, "");
+
+      if (numbers.length === 11) {
+        return numbers.replace(
+          /^(\d{2})(\d{5})(\d{4})$/,
+          "($1) $2-$3"
+        );
+      }
+
+      if (numbers.length === 10) {
+        return numbers.replace(
+          /^(\d{2})(\d{4})(\d{4})$/,
+          "($1) $2-$3"
+        );
+      }
+
+      return value;
     }
-   }
+
   }
 };
 </script>
@@ -233,5 +289,14 @@ tr:hover {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.document {
+  font-family: monospace;
+  letter-spacing: 0.3px;
+}
+
+.phone {
+  font-weight: 500;
 }
 </style>

@@ -1,7 +1,18 @@
 <template>
-  <div>
-    <h2>Novo Cliente</h2>
+  <div class="create-client">
+
+    <!-- HEADER -->
+    <div class="page-header">
+      <button class="back-button" @click="$router.back()">
+        ← Voltar
+      </button>
+
+      <h2>Novo Cliente</h2>
+    </div>
+
+    <!-- FORM -->
     <ClientForm @submit="saveClient($event)" />
+
   </div>
 </template>
 
@@ -13,7 +24,7 @@ export default {
   components: { ClientForm },
   methods: {
    async saveClient(data) {
-  // 🔥 Ignora evento DOM
+
   if (!data || data.isTrusted) return;
 
   try {
@@ -27,3 +38,4 @@ export default {
   }
 };
 </script>
+

@@ -253,6 +253,7 @@ watch(
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
+  color: #000000;
 }
 
 /* CARD */
@@ -276,7 +277,7 @@ watch(
 label {
   font-weight: 600;
   margin-bottom: 4px;
-  color: #374151;
+  color: #000000;
 }
 
 input,
@@ -300,7 +301,7 @@ textarea {
 
 .primary {
   background: #2563eb;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .primary:hover {
@@ -321,7 +322,7 @@ textarea {
 }
 
 .mensagem {
-  background: #f9fafb;
+  background: #dadada;
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -331,7 +332,7 @@ textarea {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #6b7280;
+  color: #000000;
 }
 
 .chat-actions {

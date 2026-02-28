@@ -6,7 +6,11 @@
     </div>    
     <div class="form-group">
       <label>CPF/CNPJ</label>
-      <input v-model.trim="form.cpf_cnpj" required />
+      <input 
+        :value="form.cpf_cnpj"
+        @input="onCpfCnpjInput"
+        required
+      />
     </div>
 
     <div class="form-group">
@@ -26,7 +30,10 @@
 
     <div class="form-group">
       <label>Telefone</label>
-      <input v-model.trim="form.telefone" />
+      <input 
+        :value="form.telefone"
+        @input="onPhoneInput"
+      />
     </div>
 
     <div class="form-actions">
@@ -82,14 +89,60 @@ export default {
       };
     },
 
+    onlyNumbers(value) {
+      return (value || "").replace(/\D/g, "");
+    },
+
+    maskCpfCnpj(value) {
+      let v = this.onlyNumbers(value).slice(0, 14);
+
+      if (v.length <= 11) {
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      } else {
+        v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+        v = v.replace(/(\d{4})(\d)/, "$1-$2");
+      }
+
+      return v;
+    },
+
+     maskPhone(value) {
+       let v = this.onlyNumbers(value);
+
+       if (v.length > 10) {
+         v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+      } else {
+        v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+      }
+
+      return v;
+    },
+
+     onCpfCnpjInput(e) {
+       const numbers = this.onlyNumbers(e.target.value).slice(0, 14);
+       this.form.cpf_cnpj = this.maskCpfCnpj(e.target.value);
+     },
+
+     onPhoneInput(e) {
+       const numbers = this.onlyNumbers(e.target.value).slice(0, 11);
+       this.form.telefone = this.maskPhone(e.target.value);
+     },
+
     async handleSubmit() {
       if (this.submitting) return;
 
       this.submitting = true;
 
       try {
-        // Emite apenas os dados limpos
-        this.$emit("submit", { ...this.form });
+        this.$emit("submit", {
+          ...this.form,
+          cpf_cnpj: this.onlyNumbers(this.form.cpf_cnpj),
+          telefone: this.onlyNumbers(this.form.telefone)
+        });
       } finally {
         this.submitting = false;
       }
