@@ -1,6 +1,6 @@
 const express = require("express");
-const db = require("./database");
-const clientModel = require("./models/clientModel");
+const db = require("./src/database");
+const clientModel = require("./src/models/clientModel");
 
 
 const router = express.Router();

@@ -1,17 +1,27 @@
 {
   "name": "docker-node-app",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon -L app.js"
+    "server": "nodemon -L server.js",
+    "client": "vite --host",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.13.5",
+    "concurrently": "^9.2.1",
     "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.0.2",
+    "vue": "^3.5.25",
+    "vue-router": "^5.0.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@vitejs/plugin-vue": "^6.0.2",
+    "nodemon": "^3.1.11",
+    "vite": "^7.3.1"
   }
 }
